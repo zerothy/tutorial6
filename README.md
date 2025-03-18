@@ -1,0 +1,8 @@
+# Reflection
+
+## Reflection 1
+Fungsi `handle_connection` adalah fungsi yang bertujuan untuk memproses koneksi TCP yang masuk dari klien dengan menggunakan `TcpStream`. Sesuai dengan dokumentasi Rust yang saya baca, `TcpStream` merepresentasikan koneksi socket antara server dan client. Fungsi ini menggunakan `BufReader` Untuk membaca data secara efisien, yang mana sesuai dokumentasi, `BufReader` adalah wrapper yang membuffer operasi I/O, mengurangi overhead pembacaan langsung dari stream. Dengan method `.lines()` yang digunakan pada `BufReader`, kita dapat membaca data dari stream per baris sebagai iterator yang menghasilkan `Result<String>`, dimana setiap baris di-`unwrap()` dan di-`match` untuk mendapatkan data yang diinginkan.
+
+Pembacaan dihentikan ketika bertemu baris kosong dengan menggunakan `.take_while(|line| !line.is_empty())`, mengikuti konvensi HTTP dimana header diakhiri dengan baris kosong `\r\n\r\n`. Tapi, fungsi ini belum sepenuhnya benar. Method `.lines()` pada Rust memisahkan baris pada `\n`, akan tetapi HTTP header dipisahkan dengan `\r\n`. Hingga bisa saja baris masih mengandung `\r` sehingga pemeriksaan `line.is_empty()` tidak akan benar. Seharusnya kita menggunakan `line.trim().is_empty()` agar baris yang mengandung `\r` juga dianggap kosong. Setelah membaca header HTTP, fungsi akan mengeprint hasilnya ke konsol tanpa melakukan apapun ke klien.
+
+Secara keseluruhan, fungsi ini merupakan contoh dasar bagaimana cara membaca TcpStream dan mengolah data yang diterima. Namun, fungsi ini belum sepenuhnya benar karena masih ada kekurangan dalam mengecek baris kosong pada header HTTP.
