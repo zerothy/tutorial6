@@ -15,3 +15,10 @@ Selain itu, penggunaan `unwrap()` pada `read_to_string` dan `write_all` juga har
 Berikut screenshot hasil dari commit kedua:
 
 ![Commit 2 screen capture](/assets/images/commit2.png)
+
+## Reflection 3
+Refactoring dilakukan untuk meningkatkan maintainability dan readability dari kode. Sebelum di refactor, logic pembuatan response HTTP diulang dua kali untuk kasus response 200 dan 404. Hal ini dapat membuat terjadinya inkonsistensi jika ada perubahan yang akan dilakukan nanti. Dengan memisahkan status line dan nama file ke `if else`, logic dari routingnya akan terlihat lebih jelas. Dan jika ada perubahan di masa depan, maka hanya akan dilakukan sekali saja di tempat tersebut.
+
+Untuk lebih jelas, perubahannya terlihat pada tuple `status_line` dan `file_name`, serta penghapusan duplikasi kode untuk membaca file dan mengirim response. Berikut screenshotnya:
+
+![Commit 3 screen capture](/assets/images/commit3.png)
