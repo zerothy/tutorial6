@@ -22,3 +22,6 @@ Refactoring dilakukan untuk meningkatkan maintainability dan readability dari ko
 Untuk lebih jelas, perubahannya terlihat pada tuple `status_line` dan `file_name`, serta penghapusan duplikasi kode untuk membaca file dan mengirim response. Berikut screenshotnya:
 
 ![Commit 3 screen capture](/assets/images/commit3.png)
+
+## Reflection 4
+Kode ini menggunakan thread blocking untuk mensimulasikan proses yang berat. Ketika mengakses `/sleep`, server akan tidur selama 10 detik, lalu akan mengirim response. Karena kode masih berjalan dalam single thread, semua request akan dilakukan secara berurutan. Jika 2 browser mengakses hal yang sama, satu `/sleep` dan satunya lagi `/`, maka `/` akan muncul setelah 10 detik. Pada real life situation, hal ini akan menyebabkan bottleneck kalau banyak pengguna mengakses endpoint yang membutuhkan waktu lama. Solusi yang banyak digunakan adalah menggunakan multithreading atau async programming.
