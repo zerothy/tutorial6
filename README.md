@@ -25,3 +25,10 @@ Untuk lebih jelas, perubahannya terlihat pada tuple `status_line` dan `file_name
 
 ## Reflection 4
 Kode ini menggunakan thread blocking untuk mensimulasikan proses yang berat. Ketika mengakses `/sleep`, server akan tidur selama 10 detik, lalu akan mengirim response. Karena kode masih berjalan dalam single thread, semua request akan dilakukan secara berurutan. Jika 2 browser mengakses hal yang sama, satu `/sleep` dan satunya lagi `/`, maka `/` akan muncul setelah 10 detik. Pada real life situation, hal ini akan menyebabkan bottleneck kalau banyak pengguna mengakses endpoint yang membutuhkan waktu lama. Solusi yang banyak digunakan adalah menggunakan multithreading atau async programming.
+
+## Reflection 5
+Implementasi ThreadPool memungkinkan server menangani beberapa request secara bersamaan. Struktur ThreadPool menggunakan `Arc` dan `Mutex` untuk berbagi job queue antar worker thread. Setiap thread secara terus-menerus mengambil tugas dari queue dan menjalankannya. Dengan approach ini, server menjadi lebih responsif dan scalable untuk menangani banyak request sekaligus.
+
+Implementasi `Drop` pada ThreadPool berfungsi untuk memastikan bahwa semua thread dihentikan dengan aman saat pool tidak lagi digunakan. Saat ThreadPool di drop, sinyal termination dikirim ke semua thread, dan setiap thread akan keluar dari loop setelah menyelesaikan tugasnya. Mekanisme ini mencegah resource leak dan memastikan server tidak tiba-tiba berhenti di tengah pemrosesan request. Tanpa implementasi `Drop` yang benar, thread mungkin akan tetap berjalan meskipun server sudah berhenti, atau bahkan bisa menyebabkan deadlock akibat antrian yang terkunci. 
+
+Lalu ada `take(2)` pada loop listener yang membatasi server hanya menerima 2 request sebelum berhenti. Ini berguna untuk testing simulasi beban terbatas tanpa harus mematikan server secara manual. Pada real life, batas ini dihapus agar server terus berjalan, karena tidak bagus juga jika server berhenti setelah beberapa kali request berat.    
